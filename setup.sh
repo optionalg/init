@@ -1,3 +1,17 @@
+# homebrew
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew doctor
+
+# setup git
+git config --global user.name "davidcondrey"
+git config --global user.email "davidcondrey@me.com"
+git config --global color.ui auto
+
+# set textmate as default for git
+git config --global core.editor "mate -w"
+
+
+# textmate
 BUNDLES_PATH=`pwd`
 
 mkdir -p ~/Library/Application\ Support/TextMate/Bundles
