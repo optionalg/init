@@ -196,3 +196,6 @@ function commit() {
 
 ## ungitify a project
 alias ungit="find . -name '.git' -exec rm -rf {} \;"
+
+# include CSS analysis command utility
+source ~/.css
