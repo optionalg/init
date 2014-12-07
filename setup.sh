@@ -20,6 +20,8 @@ cd .. && rm -rf wget*
 git config --global user.name "davidcondrey"
 git config --global user.email "davidcondrey@me.com"
 git config --global color.ui auto
+## git extras
+(cd /tmp && git clone --depth 1 https://github.com/tj/git-extras.git && cd git-extras && sudo make install)
 
 # set textmate as default for git
 git config --global core.editor "mate -w"
