@@ -2,6 +2,7 @@
 #
 # move .bash_profile and .bashrc into place
 mv *.bash* ~/
+mv .css ~/
 
 # xcode command-line tools
 xcode-select --install
@@ -19,7 +20,6 @@ cd .. && rm -rf wget*
 git config --global user.name "davidcondrey"
 git config --global user.email "davidcondrey@me.com"
 git config --global color.ui auto
-
 
 # set textmate as default for git
 git config --global core.editor "mate -w"
