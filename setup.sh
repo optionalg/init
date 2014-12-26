@@ -22,7 +22,8 @@ git config --global user.email "davidcondrey@me.com"
 git config --global color.ui auto
 ## git extras
 (cd /tmp && git clone --depth 1 https://github.com/tj/git-extras.git && cd git-extras && sudo make install)
-
+## global gitignore
+git config --global core.excludesfile '~/.gitignore' && mv .gitignore ~/
 # set textmate as default for git
 git config --global core.editor "mate -w"
 ## textmate bundles
