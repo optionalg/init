@@ -24,6 +24,10 @@ git config --global color.ui auto
 (cd /tmp && git clone --depth 1 https://github.com/tj/git-extras.git && cd git-extras && sudo make install)
 ## global gitignore
 git config --global core.excludesfile '~/.gitignore' && mv .gitignore ~/
+
+# slate
+cd /Applications && curl http://www.ninjamonkeysoftware.com/slate/versions/slate-latest.tar.gz | tar -xz
+
 # set textmate as default for git
 git config --global core.editor "mate -w"
 ## textmate bundles
