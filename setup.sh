@@ -10,6 +10,11 @@ xcode-select --install
 # homebrew
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew doctor
+brew install caskroom/cask/brew-cask
+# Quick look plugins
+brew cask install qlcolorcode qlstephen qlmarkdown quicklook-json qlprettypatch quicklook-csv betterzipql qlimagesize webpquicklook suspicious-package
+# Enable text selection in Quick Look
+defaults write com.apple.finder QLEnableTextSelection -bool true && killall Finder
 
 # wget
 curl http://ftp.gnu.org/gnu/wget/wget-1.15.tar.xz > wget-1.15.tar.xz &&
