@@ -18,8 +18,10 @@ xcode-select --install
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew doctor
 brew install caskroom/cask/brew-cask
+
 # Quick look plugins
 brew cask install qlcolorcode qlstephen qlmarkdown quicklook-json qlprettypatch quicklook-csv betterzipql qlimagesize webpquicklook suspicious-package
+
 # Enable text selection in Quick Look
 defaults write com.apple.finder QLEnableTextSelection -bool true && killall Finder
 
@@ -32,8 +34,10 @@ cd .. && rm -rf wget*
 git config --global user.name "davidcondrey"
 git config --global user.email "davidcondrey@me.com"
 git config --global color.ui auto
+
 ## git extras
 (cd /tmp && git clone --depth 1 https://github.com/tj/git-extras.git && cd git-extras && sudo make install)
+
 ## global gitignore
 git config --global core.excludesfile '~/.gitignore' && mv .gitignore ~/
 
@@ -42,26 +46,18 @@ cd /Applications && curl http://www.ninjamonkeysoftware.com/slate/versions/slate
 
 # set textmate as default for git
 git config --global core.editor "mate -w"
+
 ## textmate bundles
 BUNDLES_PATH=`pwd`
 mkdir -p ~/Library/Application\ Support/TextMate/Bundles
 rm -rf ~/Library/Application\ Support/TextMate/Bundles
 mkdir -p Bundles
 ln -sf "$BUNDLES_PATH/Bundles" ~/Library/Application\ Support/TextMate/Bundles
-get_bundle() {
-  (
-  if [ -d "$3" ]; then
-    echo "Updating $1's $2"
-    cd "$3"
-    git pull --rebase
-  else
-    git clone "git://github.com/$1/$2.git" "$3"
-  fi
-  )
-}
+
+get_bundle() { git clone "git://github.com/$1/$2.git" "$3" }
 get_bundle drnic github-tmbundle "Bundles/github.tmbundle"
 get_bundle fgnass jshint.tmbundle "Bundles/jshint.tmbundle"
-get_bundle grorg/svg-tmbundle.git "Bundles/svg.tmbundle
+get_bundle grorg/svg-tmbundle.git "Bundles/svg.tmbundle"
 get_bundle jcf git-tmbundle "Bundles/git.tmbundle"
 get_bundle kswedberg jquery-tmbundle "Bundles/jquery.tmbundle"
 get_bundle kuroir SCSS.tmbundle "Bundles/scss.tmbundle"
