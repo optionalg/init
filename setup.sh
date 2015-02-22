@@ -1,8 +1,15 @@
 #!/bin/bash
 #
 # move .bash_profile and .bashrc into place
-mv *.bash* ~/
-mv .css ~/
+mv *.bash* ~/ && mv .css ~/
+
+export HISTSIZE=2000
+export HISTFILESIZE=1000000
+export HISTCONTROL=ignoredups
+export HISTTIMEFORMAT=
+export PROMPT_COMMAND='history -a'
+shopt -s cmdhist
+shopt -s histappend
 
 # xcode command-line tools
 xcode-select --install
@@ -18,7 +25,7 @@ defaults write com.apple.finder QLEnableTextSelection -bool true && killall Find
 
 # wget
 curl http://ftp.gnu.org/gnu/wget/wget-1.15.tar.xz > wget-1.15.tar.xz &&
-tar -xzf wget-1.15.tar.xz && cd wget-1.15 && ./configure --with-ssl=openssl && make -j8 && sudo make install &&
+tar -xzf wget-1.15.tar.xz && cd wget-1.15 && ./configure --with-ssl=openssl && make -j8 && sudo make install
 cd .. && rm -rf wget*
 
 # setup git
