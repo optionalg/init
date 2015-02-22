@@ -39,7 +39,6 @@ alias shutdown='sudo /sbin/shutdown'        # shutdown
 
 alias ff13='/opt/firefox13/firefox'         # open Firefox
 alias chrome='/opt/google/chrome/chrome'    # open Chrome
-alias opera='/opt/opera/opera               # open Opera
 
 alias qfind="find . -name "                 # qfind:    Quickly search for file
 ff () { /usr/bin/find . -name "$@" ; }      # ff:       Find file under the current directory
@@ -173,6 +172,9 @@ httpHeaders () { /usr/bin/curl -I -L $@ ; }             # httpHeaders:      Grab
 
 # httpDebug:  Download a web page and show info on what took time
 httpDebug () { /usr/bin/curl $@ -o /dev/null -w "dns: %{time_namelookup} connect: %{time_connect} pretransfer: %{time_pretransfer} starttransfer: %{time_starttransfer} total: %{time_total}\n" ; }
+
+# server 8080
+server() { open "http://localhost:${1}" && python -m SimpleHTTPServer $1 }
 
 # screensaverDesktop: Run a screensaver on the Desktop
 # alias screensaverDesktop='/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine -background'
