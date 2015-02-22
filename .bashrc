@@ -201,3 +201,9 @@ alias ungit="find . -name '.git' -exec rm -rf {} \;"
 
 # include CSS analysis command utility
 source ~/.css
+
+# run a command every N seconds in the background
+## usage: chronic 3600 time
+# Print the time in your shell every hour chronic 60 updatedb > /dev/null # update slocate every minute
+
+chronic () { t=$1; shift; while true; do $@; sleep $t; done & }
