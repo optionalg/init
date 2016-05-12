@@ -1,0 +1,12 @@
+{
+  "generator-iojs:4.2.0": {
+    "promptValues": {
+      "license": "MIT",
+      "githubUsername": "dcondrey",
+      "authorName": "D. Condrey",
+      "authorEmail": "davidcondrey@me.com",
+      "authorUrl": "http://www.condrey.io",
+      "isPrivate": false
+    }
+  }
+}
