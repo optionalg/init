@@ -1,0 +1,12 @@
+{
+    "jsdocs_extra_tags": [
+        "@requires",
+        "@module"
+    ],
+    "jsdocs_notation_map": [
+        {
+            "prefix": "evt", /* a prefix, matches only if followed by an underscore or A-Z */
+            "type": "object" /* translates to "Boolean" in javascript, "bool" in PHP */
+        }
+    ]
+}

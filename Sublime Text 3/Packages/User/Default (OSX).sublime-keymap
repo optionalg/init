@@ -1,0 +1,15 @@
+[
+    {
+        "keys": ["Option+d"],
+        "command": "goto_definition"
+    },
+    {
+        "keys": ["Option+j"],
+        "command": "jsbeautify",
+        "context": [{
+            "key": "selector",
+            "operator": "equal",
+            "operand": "source.js,source.json,source.jade"
+        }]
+    }
+]

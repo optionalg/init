@@ -1,0 +1,32 @@
+<snippet>
+    <content><![CDATA[
+define([
+    '${1}'
+], function (
+    ${2}
+) {
+
+    'use strict';
+
+    var TCOM = window.TCOM,
+        $ = TCOM.$,
+        _ = TCOM._;
+
+    var ${4:ModuleName} = {
+
+        initialize: function() {
+            var self = this;
+
+        }
+
+    };
+
+    ${4:ModuleName}.initialize();
+
+    return ${4:ModuleName};
+});
+]]></content>
+    <tabTrigger>module</tabTrigger>
+    <scope>source.js</scope>
+    <description>[module] Module</description>
+</snippet>

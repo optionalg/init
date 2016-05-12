@@ -2,7 +2,7 @@
 
 # move .bash_profile and .bashrc into place
 mv *.bash* ~/ && mv .css ~/
-
+mv "Sublime Text 3" ~/Library/Application\ Support/
 export HISTSIZE=2000
 export HISTFILESIZE=1000000
 export HISTCONTROL=ignoredups

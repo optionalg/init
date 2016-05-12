@@ -1,0 +1,46 @@
+{
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		"All Autocomplete",
+		"AMD Snippets",
+		"Clipboard Diff",
+		"CSScomb",
+		"Gist",
+		"Javascript Beautify",
+		"JavaScriptNext - ES6 Syntax",
+		"Jekyll",
+		"Local History",
+		"MarkdownEditing",
+		"Objective-C Autocompletion",
+		"Package Control",
+		"Phpcs",
+		"Predawn",
+		"Predawn Twilight Theme",
+		"Pretty JSON",
+		"SideBarEnhancements",
+		"SublimeCodeIntel",
+		"SublimeEnhancedUtilitiesSet",
+		"SublimeLinter",
+		"SublimeLinter-annotations",
+		"SublimeLinter-contrib-scss-lint",
+		"SublimeLinter-csslint",
+		"SublimeLinter-html-tidy",
+		"SublimeLinter-jshint",
+		"SublimeLinter-json",
+		"SublimeLinter-php",
+		"SublimeLinter-phpcs",
+		"Summary",
+		"Swift",
+		"Syntax Highlighting for Sass",
+		"TabsExtra",
+		"Underscorejs snippets"
+	],
+	"repositories":
+	[
+		"https://github.com/ummmmm/SVNPlugin"
+	]
+}

@@ -1,0 +1,4 @@
+<snippet>
+    <content><![CDATA[${1:firstchar}[^${2:secondchar}]*${2:secondchar}]]></content>
+    <description>Regex: Capture between any two characters</description>
+</snippet>

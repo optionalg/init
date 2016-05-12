@@ -1,0 +1,13 @@
+{
+    "exec_args": {
+        "path": "/bin:/usr/bin:/usr/local/bin"
+    },
+    "gruntfile_paths": [
+        "$HOME/toyota_responsive/ToyotaSiteResponsiveUI",
+        "$HOME/toyota_responsive/ToyotaResponsiveUI/tcom",
+        "$HOME/toyota_responsive/ToyotaResponsiveUI/tcom-ui",
+        "$HOME/toyota_responsive/ToyotaResponsiveUI/tcom-apps",
+        "$HOME/toyota_responsive/ToyotaResponsiveUI/common",
+        "$HOME/toyota_responsive/ToyotaSite2012UI"
+    ]
+}
