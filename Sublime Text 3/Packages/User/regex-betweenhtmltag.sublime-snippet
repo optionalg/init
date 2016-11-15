@@ -1,4 +1,0 @@
-<snippet>
-    <content><![CDATA[(?s)<${1:tag}(.*?)</${1:tag}>]]></content>
-    <description>Regex: Between html tag</description>
-</snippet>

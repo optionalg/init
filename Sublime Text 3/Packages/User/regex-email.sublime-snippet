@@ -1,4 +1,0 @@
-<snippet>
-    <content><![CDATA[\S+\@\w+\.\w+]]></content>
-    <description>Capture email addresses</description>
-</snippet>
