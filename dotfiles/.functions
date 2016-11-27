@@ -29,6 +29,18 @@ if [ $? -eq 0 ]; then
 	}
 fi;
 
+function pushpull {
+    local user=dcondrey
+
+    if [[ "$(git push --porcelain)" == *"Done"* ]]; then
+        if [[ "(ifconfig utun1 | grep -q 172)" ]]; then
+            ssh $user@dev1.collide.com -t "cd projects/collide/php; git pull"
+        else
+            echo "VPN inactive"
+        fi
+    fi
+}
+
 # Create a data URL from a file
 function dataurl() {
 	local mimeType=$(file -b --mime-type "$1");
