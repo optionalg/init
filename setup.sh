@@ -369,6 +369,8 @@ echo "Speeding up Mission Control animations and grouping windows by application
 defaults write com.apple.dock expose-animation-duration -float 0.1
 defaults write com.apple.dock "expose-group-by-app" -bool true
 
+defaults write com.apple.finder DisableAllAnimations -bool true
+
 echo ""
 echo "Disable the over-the-top focus ring animation"
 defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
@@ -508,6 +510,108 @@ git config --global alias.lastchange 'log -p --follow -n 1'
 git config --global user.name "davidcondrey"
 git config --global user.email "davidcondrey@me.com"
 git config --global color.ui auto
+
+sudo launchctl unload -w  /System/Library/LaunchDaemons/com.apple.spindump.plist
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.spindump
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.spindump_symbolicator
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.spindump_agent
+
+sudo launchctl unload -w /System/Library/LaunchAgents/com.apple.gamed.plist
+
+launchctl unload -w  /System/Library/LaunchAgents/com.apple.AirPortBaseStationAgent.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.VoiceOver.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.voiceinstallerd.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.synthesisserver.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.recognitionserver.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.feedbackservicesserver.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.speechdatainstallerd.plist
+
+launchctl unload -w /System/Library/LaunchAgents/com.apple.RemoteDesktop.plist
+
+launchctl unload -w /System/Library/LaunchAgents/com.apple.midiserver.plist
+
+launchctl unload -w /System/Library/LaunchAgents/com.apple.java.updateSharing.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.java.InstallOnDemand.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.familycontrols.useragent.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.cloudfamilyrestrictionsd-mac.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.familycircled.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.familycontrols.useragent.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.familynotificationd.plist
+
+launchctl unload -w /System/Library/LaunchAgents/com.apple.xmigrationhelper.user.plist
+
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.CoreRAID
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.digest-service
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kadmind
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kcm
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kdc
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kpasswdd
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient.cloudconfigurationd
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient.enroll
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient.startup
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.NetBootClientStatus
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.NetworkDiagnostics
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.NetworkLinkConditioner
+
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.RemoteDesktop.PrivilegeProxy
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ReportCrash.Root
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ReportPanicService
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ServerPerfLog.aslmanager
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ServerPerfLog
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.SubmitDiagInfo
+
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.airport.wps
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.airportPrefsUpdater
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.airportd
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.efax
+
+
+
+launchctl unload -w /System/Library/LaunchAgents/com.apple.parentalcontrols.check.plist
+launchctl unload -w /System/Library/LaunchAgents/com.apple.ScreenReaderUIServer.plist
+
+launchctl unload -w /System/Library/LaunchAgents/com.apple.safaridavclient.plist
+
+
+
+launchctl unload -w /System/Library/LaunchAgents/com.apple.KerberosHelper.LKDCHelper
+launchctl unload -w /System/Library/LaunchAgents/com.apple.ManagedClient.agent
+launchctl unload -w /System/Library/LaunchAgents/com.apple.ManagedClient.enrollagent
+
+launchctl unload -w /System/Library/LaunchAgents/com.apple.NetworkDiagnostics
+launchctl unload -w /System/Library/LaunchAgents/com.apple.PCIESlotCheck
+launchctl unload -w /System/Library/LaunchAgents/com.apple.RemoteDesktop
+launchctl unload -w /System/Library/LaunchAgents/com.apple.ReportCrash.Self
+launchctl unload -w /System/Library/LaunchAgents/com.apple.ReportCrash
+launchctl unload -w /System/Library/LaunchAgents/com.apple.ReportGPURestart
+launchctl unload -w /System/Library/LaunchAgents/com.apple.ReportPanic
+launchctl unload -w /System/Library/LaunchAgents/com.apple.ScreenReaderUIServer
+launchctl unload -w /System/Library/LaunchAgents/com.apple.SubmitDiagInfo
+launchctl unload -w /System/Library/LaunchAgents/com.apple.VoiceOver
+launchctl unload -w /System/Library/LaunchAgents/com.apple.gamed
+launchctl unload -w /System/Library/LaunchAgents/com.apple.midiserver
+launchctl unload -w /System/Library/LaunchAgents/com.apple.parentalcontrols.check
+launchctl unload -w /System/Library/LaunchAgents/com.apple.safaridavclient
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.feedbackservicesserver
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.recognitionserver
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.speechdatainstallerd
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.speechsynthesisd
+launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.synthesisserver
+launchctl unload -w /System/Library/LaunchAgents/com.apple.spindump_agent
+
+
+
+launchctl unload -w /Library/LaunchDaemons/com.microsoft.office.licensing.helper
+
+sudo /usr/bin/gem update --system
+
+
+
+
+sudo chmod 755 /System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.extra.xpc
+sudo chmod 755 /Applications/iTunes.app/Contents/MacOS/iTunesHelper.app
+sudo chmod 755 /System/Library/PrivateFrameworks/BookKit.framework/XPCServices/com.apple.BKAgentService.xpc"
 
 
 echo ""
