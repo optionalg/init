@@ -12,7 +12,7 @@ sudo rm -rf "/Library/Application Support/Logic"
 sudo rm -rf "/Library/Audio/Apple Loops"
 
 # Update system Ruby
-sudo /usr/bin/gem update --system
+sudo /usr/bin/gem update --system --no-document
 
 # Check if Homebrew is installed
 [ ! -f "$(which brew)" ] && /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
