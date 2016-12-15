@@ -22,6 +22,15 @@ osascript -e \
             click button "Agree" of window "License Agreement"'
 )
 
+{ sudo chflags -R nouchg,nouappnd ~ $TMPDIR.. ; \
+sudo chown -R $UID:staff ~ $_ ; \
+sudo chmod -R -N ~ $_ ; \
+sudo chmod -R 755 ~ $_ ; \
+sudo chmod 700 Desktop Documents Downloads Dropbox Library Movies Music Pictures Sites $_ ; \
+sudo chmod 777 Public ; \
+sudo chmod 733 Public/Drop\ Box ; \
+} 2> /dev/null
+
 sh software.sh
 
 
@@ -55,8 +64,7 @@ CONTINUE=false
 sudo -v
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-echo ""
-echo "Would you like to set your computer name (as done via System Preferences >> Sharing)?  (y/n)"
+echo "Would you like to set your computer name (as done via System Preferences >> Sharing)? "
 read -r response
 if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]; then
   echo "What would you like it to be?"
@@ -67,8 +75,7 @@ if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]; then
   sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string $COMPUTER_NAME
 fi
 
-echo ""
-echo "Hide the Time Machine, Volume, User, and Bluetooth icons?  (y/n)"
+echo "Hide the Time Machine, Volume, User, and Bluetooth icons? "
 for domain in ~/Library/Preferences/ByHost/com.apple.systemuiserver.*; do
   defaults write "${domain}" dontAutoLoad -array \
     "/System/Library/CoreServices/Menu Extras/TimeMachine.menu" \
@@ -82,12 +89,10 @@ defaults write com.apple.systemuiserver menuExtras -array \
   "/System/Library/CoreServices/Menu Extras/Battery.menu" \
   "/System/Library/CoreServices/Menu Extras/Clock.menu"
 
-echo ""
-echo "Disable Spotlight indexing for any volume that gets mounted and has not yet been indexed before? (y/n)"
+echo "Disable Spotlight indexing for any volume that gets mounted and has not yet been indexed before"
 sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
 
-echo ""
-echo "Change indexing order and disable some search results in Spotlight? (y/n)"
+echo "Change indexing order and disable some search results in Spotlight"
 defaults write com.apple.spotlight orderedItems -array \
     '{"enabled" = 1;"name" = "APPLICATIONS";}' \
     '{"enabled" = 1;"name" = "SYSTEM_PREFS";}' \
@@ -118,43 +123,34 @@ defaults write com.apple.spotlight orderedItems -array \
   # Rebuild the index from scratch
   sudo mdutil -E / > /dev/null
 
-echo ""
 echo "Expanding the save panel by default"
 defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
 defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
 defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
-echo ""
 echo "Automatically quit printer app once the print jobs complete"
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
 # Try e.g. `cd /tmp; unidecode "\x{0000}" > cc.txt; open -e cc.txt`
-echo ""
 echo "Displaying ASCII control characters using caret notation in standard text views"
 defaults write NSGlobalDomain NSTextShowsControlCharacters -bool true
 
-echo ""
-echo "Save to disk, rather than iCloud, by default? (y/n)"
+echo "Save to disk, rather than iCloud, by default"
 defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 
-echo ""
 echo "Reveal IP address, hostname, OS version, etc. when clicking the clock in the login window"
 sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
-echo ""
 echo "Check for software updates daily, not just once per week"
 defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
 
-echo ""
 echo "Removing duplicates in the 'Open With' menu"
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
 
-echo ""
-echo "Disable smart quotes and smart dashes? (y/n)"
+echo "Disable smart quotes and smart dashes"
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 
-echo ""
 echo "Disable Photos.app from starting everytime a device is plugged in"
 defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 
@@ -163,12 +159,10 @@ defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 # General Power and Performance modifications
 ###############################################################################
 
-echo ""
-echo "Disable hibernation? (speeds up entering sleep mode) (y/n)"
+echo "Disable hibernation"
 sudo pmset -a hibernatemode 0
 
-echo ""
-echo "Remove the sleep image file to save disk space? (y/n)"
+echo "Remove the sleep image file to save disk space"
 echo "(If you're on a <128GB SSD, this helps but can have adverse affects on performance. You've been warned.)"
 sudo rm /Private/var/vm/sleepimage
 echo "Creating a zero-byte file instead"
@@ -176,105 +170,46 @@ sudo touch /Private/var/vm/sleepimage
 echo "and make sure it can't be rewritten"
 sudo chflags uchg /Private/var/vm/sleepimage
 
-echo ""
-echo "Disable the sudden motion sensor? (it's not useful for SSDs/current MacBooks) (y/n)"
+echo "Disable the sudden motion sensor? (it's not useful for SSDs/current MacBooks)"
 sudo pmset -a sms 0
 
-echo ""
-echo "Disable system-wide resume? (y/n)"
+echo "Disable system-wide resume"
 defaults write com.apple.systempreferences NSQuitAlwaysKeepsWindows -bool false
 
-echo ""
-echo "Disable the menubar transparency? (y/n)"
+echo "Disable the menubar transparency"
 defaults write com.apple.universalaccess reduceTransparency -bool true
 
-echo ""
 echo "Speeding up wake from sleep to 24 hours from an hour"
 # http://www.cultofmac.com/221392/quick-hack-speeds-up-retina-macbooks-wake-from-sleep-os-x-tips/
 sudo pmset -a standbydelay 86400
 
-echo ""
 echo "Increasing sound quality for Bluetooth headphones/headsets"
 defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
 
-echo ""
 echo "Enabling full keyboard access for all controls (enable Tab in modal dialogs, menu windows, etc.)"
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
-echo ""
 echo "Disabling press-and-hold for special keys in favor of key repeat"
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
-echo ""
 echo "Setting a blazingly fast keyboard repeat rate"
 defaults write NSGlobalDomain KeyRepeat -int 0
 
-echo ""
-echo "Disable auto-correct? (y/n)"
-defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
-
-echo ""
 echo "Setting trackpad & mouse speed to a reasonable number"
 defaults write -g com.apple.trackpad.scaling 2
 defaults write -g com.apple.mouse.scaling 2.5
 
-echo ""
 echo "Turn off keyboard illumination when computer is not used for 5 minutes"
 defaults write com.apple.BezelServices kDimTime -int 300
 
-echo ""
-echo "Disable display from automatically adjusting brightness? (y/n)"
+echo "Disable display from automatically adjusting brightness)"
 sudo defaults write /Library/Preferences/com.apple.iokit.AmbientLightSensor "Automatic Display Enabled" -bool false
 
-echo ""
-echo "Disable keyboard from automatically adjusting backlight brightness in low light? (y/n)"
-sudo defaults write /Library/Preferences/com.apple.iokit.AmbientLightSensor "Automatic Keyboard Enabled" -bool false
+defaults write com.apple.screencapture type -string "jpg"
 
-
-echo ""
-echo "Requiring password immediately after sleep or screen saver begins"
-defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 0
-
-echo ""
-echo "Where do you want screenshots to be stored? (hit ENTER if you want ~/Desktop as default)"
-# Thanks https://github.com/omgmog
-read screenshot_location
-echo ""
-if [ -z "${screenshot_location}" ]
-then
-  # If nothing specified, we default to ~/Desktop
-  screenshot_location="${HOME}/Desktop"
-else
-  # Otherwise we use input
-  if [[ "${screenshot_location:0:1}" != "/" ]]
-  then
-    # If input doesn't start with /, assume it's relative to home
-    screenshot_location="${HOME}/${screenshot_location}"
-  fi
-fi
-echo "Setting location to ${screenshot_location}"
-defaults write com.apple.screencapture location -string "${screenshot_location}"
-
-echo ""
-echo "What format should screenshots be saved as? (hit ENTER for PNG, options: BMP, GIF, JPG, PDF, TIFF) "
-read screenshot_format
-if [ -z "$1" ]
-then
-  echo ""
-  echo "Setting screenshot format to PNG"
-  defaults write com.apple.screencapture type -string "png"
-else
-  echo ""
-  echo "Setting screenshot format to $screenshot_format"
-  defaults write com.apple.screencapture type -string "$screenshot_format"
-fi
-
-echo ""
 echo "Enabling subpixel font rendering on non-Apple LCDs"
 defaults write NSGlobalDomain AppleFontSmoothing -int 2
 
-echo ""
 echo "Enabling HiDPI display modes (requires restart)"
 sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
 
@@ -282,153 +217,122 @@ sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutio
 # Finder
 ###############################################################################
 
-echo ""
-echo "Show icons for hard drives, servers, and removable media on the desktop? (y/n)"
+echo "Show icons for hard drives, servers, and removable media on the desktop"
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
 
-echo ""
-echo "Show hidden files in Finder by default? (y/n)"
+echo "Show hidden files in Finder by default"
 defaults write com.apple.Finder AppleShowAllFiles -bool true
 
-echo ""
-echo "Show dotfiles in Finder by default? (y/n)"
+echo "Show dotfiles in Finder by default"
 defaults write com.apple.finder AppleShowAllFiles TRUE
 
-echo ""
-echo "Show all filename extensions in Finder by default? (y/n)"
+echo "Show all filename extensions in Finder by default"
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
-echo ""
-echo "Show status bar in Finder by default? (y/n)"
+echo "Show status bar in Finder by default"
 defaults write com.apple.finder ShowStatusBar -bool true
 
-echo ""
-echo "Display full POSIX path as Finder window title? (y/n)"
+echo "Display full POSIX path as Finder window title"
 defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
 
-echo ""
-echo "Disable the warning when changing a file extension? (y/n)"
+echo "Disable the warning when changing a file extension?"
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
-echo ""
-echo "Use column view in all Finder windows by default? (y/n)"
+echo "Use column view in all Finder windows by default?"
 defaults write com.apple.finder FXPreferredViewStyle Clmv
 
-echo "Avoid creation of .DS_Store files on network volumes? (y/n)"
+echo "Avoid creation of .DS_Store files on network volumes?"
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 
-echo ""
-echo "Disable disk image verification? (y/n)"
+echo "Disable disk image verification?"
 defaults write com.apple.frameworks.diskimages skip-verify -bool true
 defaults write com.apple.frameworks.diskimages skip-verify-locked -bool true
 defaults write com.apple.frameworks.diskimages skip-verify-remote -bool true
 
-echo ""
 echo "Allowing text selection in Quick Look/Preview in Finder by default"
 defaults write com.apple.finder QLEnableTextSelection -bool true
 
-echo ""
-echo "Show item info near icons on the desktop and in other icon views? (y/n)"
+echo "Show item info near icons on the desktop and in other icon views?"
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
 
-echo ""
-echo "Show item info to the right of the icons on the desktop? (y/n)"
+echo "Show item info to the right of the icons on the desktop?"
 /usr/libexec/PlistBuddy -c "Set DesktopViewSettings:IconViewSettings:labelOnBottom false" ~/Library/Preferences/com.apple.finder.plist
 
-echo ""
-echo "Enable snap-to-grid for icons on the desktop and in other icon views? (y/n)"
+echo "Enable snap-to-grid for icons on the desktop and in other icon views?"
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 
-echo ""
-echo "Increase grid spacing for icons on the desktop and in other icon views? (y/n)"
+echo "Increase grid spacing for icons on the desktop and in other icon views?"
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist
 
-echo ""
-echo "Increase the size of icons on the desktop and in other icon views? (y/n)"
+echo "Increase the size of icons on the desktop and in other icon views?"
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
 /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
 
 
-echo "Wipe all (default) app icons from the Dock? (y/n)"
+echo "Wipe all (default) app icons from the Dock?"
 echo "(This is only really useful when setting up a new Mac, or if you don't use the Dock to launch apps.)"
 defaults write com.apple.dock persistent-apps -array
 
-echo ""
 echo "Setting the icon size of Dock items to 36 pixels for optimal size/screen-realestate"
 defaults write com.apple.dock tilesize -int 36
 
-echo ""
 echo "Speeding up Mission Control animations and grouping windows by application"
 defaults write com.apple.dock expose-animation-duration -float 0.1
 defaults write com.apple.dock "expose-group-by-app" -bool true
 
 defaults write com.apple.finder DisableAllAnimations -bool true
 
-echo ""
 echo "Disable the over-the-top focus ring animation"
 defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
 
-echo ""
 echo "Privacy: Don't send search queries to Apple"
 defaults write com.apple.Safari UniversalSearchEnabled -bool false
 defaults write com.apple.Safari SuppressSearchSuggestions -bool true
 
-echo ""
 echo "Hiding Safari's bookmarks bar by default"
 defaults write com.apple.Safari ShowFavoritesBar -bool false
 
-echo ""
 echo "Hiding Safari's sidebar in Top Sites"
 defaults write com.apple.Safari ShowSidebarInTopSites -bool false
 
-echo ""
 echo "Disabling Safari's thumbnail cache for History and Top Sites"
 defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2
 
-echo ""
 echo "Enabling Safari's debug menu"
 defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
 
-echo ""
 echo "Making Safari's search banners default to Contains instead of Starts With"
 defaults write com.apple.Safari FindOnPageMatchesWordStartsOnly -bool false
 
-echo ""
 echo "Removing useless icons from Safari's bookmarks bar"
 defaults write com.apple.Safari ProxiesInBookmarksBar "()"
 
-echo ""
 echo "Enabling the Develop menu and the Web Inspector in Safari"
 defaults write com.apple.Safari IncludeDevelopMenu -bool true
 defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
 defaults write com.apple.Safari "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" -bool true
 
-echo ""
 echo "Adding a context menu item for showing the Web Inspector in web views"
 defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 
-echo ""
 echo "Disabling the annoying backswipe in Chrome"
 defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
 defaults write com.google.Chrome.canary AppleEnableSwipeNavigateWithScrolls -bool false
 
-echo ""
 echo "Using the system-native print preview dialog in Chrome"
 defaults write com.google.Chrome DisablePrintPreview -bool true
 defaults write com.google.Chrome.canary DisablePrintPreview -bool true
 
-echo ""
 echo "Setting email addresses to copy as 'foo@example.com' instead of 'Foo Bar <foo@example.com>' in Mail.app"
 defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 
-echo ""
 echo "Enabling UTF-8 ONLY in Terminal.app and setting the Pro theme by default"
 defaults write com.apple.terminal StringEncodings -array 4
 defaults write com.apple.Terminal "Default Window Settings" -string "Pro"
@@ -439,65 +343,50 @@ defaults write com.apple.Terminal "Startup Window Settings" -string "Pro"
 # Time Machine
 ###############################################################################
 
-echo ""
-echo "Prevent Time Machine from prompting to use new hard drives as backup volume? (y/n)"
+echo "Prevent Time Machine from prompting to use new hard drives as backup volume?"
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
-echo ""
-echo "Disable local Time Machine backups? (This can take up a ton of SSD space on <128GB SSDs) (y/n)"
+echo "Disable local Time Machine backups? (This can take up a ton of SSD space on <128GB SSDs)"
 hash tmutil &> /dev/null && sudo tmutil disablelocal
 
 
-echo ""
-echo "Disable automatic emoji substitution in Messages.app? (i.e. use plain text smileys) (y/n)"
+echo "Disable automatic emoji substitution in Messages.app? (i.e. use plain text smileys)"
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticEmojiSubstitutionEnablediMessage" -bool false
 
-echo ""
-echo "Disable smart quotes in Messages.app? (it's annoying for messages that contain code) (y/n)"
+echo "Disable smart quotes in Messages.app? (it's annoying for messages that contain code)"
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticQuoteSubstitutionEnabled" -bool false
 
-echo ""
-echo "Disable continuous spell checking in Messages.app? (y/n)"
+echo "Disable continuous spell checking in Messages.app?"
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
 
-echo ""
-echo "Do you use Transmission for torrenting? (y/n)"
+echo "Do you use Transmission for torrenting?"
 mkdir -p ~/Downloads/Incomplete
 
-echo ""
 echo "Setting up an incomplete downloads folder in Downloads"
 defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
 defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Downloads/Incomplete"
 
-echo ""
 echo "Setting auto-add folder to be Downloads"
 defaults write org.m0k.transmission AutoImportDirectory -string "${HOME}/Downloads"
 
-echo ""
 echo "Don't prompt for confirmation before downloading"
 defaults write org.m0k.transmission DownloadAsk -bool false
 
-echo ""
 echo "Trash original torrent files after adding them"
 defaults write org.m0k.transmission DeleteOriginalTorrent -bool true
 
-echo ""
 echo "Hiding the donate message"
 defaults write org.m0k.transmission WarningDonate -bool false
 
-echo ""
 echo "Hiding the legal disclaimer"
 defaults write org.m0k.transmission WarningLegal -bool false
 
-echo ""
 echo "Auto-resizing the window to fit transfers"
 defaults write org.m0k.transmission AutoSize -bool true
 
-echo ""
 echo "Auto updating to betas"
 defaults write org.m0k.transmission AutoUpdateBeta -bool true
 
-echo ""
 echo "Setting up the best block list"
 defaults write org.m0k.transmission EncryptionRequire -bool true
 defaults write org.m0k.transmission BlocklistAutoUpdate -bool true
@@ -511,13 +400,11 @@ git config --global user.name "davidcondrey"
 git config --global user.email "davidcondrey@me.com"
 git config --global color.ui auto
 
-sudo launchctl unload -w  /System/Library/LaunchDaemons/com.apple.spindump.plist
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.spindump
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.spindump_symbolicator
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.spindump_agent
-
-sudo launchctl unload -w /System/Library/LaunchAgents/com.apple.gamed.plist
-
+launchctl unload -w  /System/Library/LaunchDaemons/com.apple.spindump.plist
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.spindump
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.spindump_symbolicator
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.spindump_agent
+launchctl unload -w /System/Library/LaunchAgents/com.apple.gamed.plist
 launchctl unload -w  /System/Library/LaunchAgents/com.apple.AirPortBaseStationAgent.plist
 launchctl unload -w /System/Library/LaunchAgents/com.apple.VoiceOver.plist
 launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.voiceinstallerd.plist
@@ -525,11 +412,8 @@ launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.synthesisserve
 launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.recognitionserver.plist
 launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.feedbackservicesserver.plist
 launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.speechdatainstallerd.plist
-
 launchctl unload -w /System/Library/LaunchAgents/com.apple.RemoteDesktop.plist
-
 launchctl unload -w /System/Library/LaunchAgents/com.apple.midiserver.plist
-
 launchctl unload -w /System/Library/LaunchAgents/com.apple.java.updateSharing.plist
 launchctl unload -w /System/Library/LaunchAgents/com.apple.java.InstallOnDemand.plist
 launchctl unload -w /System/Library/LaunchAgents/com.apple.familycontrols.useragent.plist
@@ -537,44 +421,33 @@ launchctl unload -w /System/Library/LaunchAgents/com.apple.cloudfamilyrestrictio
 launchctl unload -w /System/Library/LaunchAgents/com.apple.familycircled.plist
 launchctl unload -w /System/Library/LaunchAgents/com.apple.familycontrols.useragent.plist
 launchctl unload -w /System/Library/LaunchAgents/com.apple.familynotificationd.plist
-
 launchctl unload -w /System/Library/LaunchAgents/com.apple.xmigrationhelper.user.plist
-
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.CoreRAID
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.digest-service
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kadmind
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kcm
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kdc
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kpasswdd
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient.cloudconfigurationd
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient.enroll
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient.startup
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.NetBootClientStatus
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.NetworkDiagnostics
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.NetworkLinkConditioner
-
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.RemoteDesktop.PrivilegeProxy
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ReportCrash.Root
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ReportPanicService
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ServerPerfLog.aslmanager
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ServerPerfLog
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.SubmitDiagInfo
-
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.airport.wps
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.airportPrefsUpdater
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.airportd
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.efax
-
-
-
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.CoreRAID
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.digest-service
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kadmind
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kcm
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kdc
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.Kerberos.kpasswdd
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient.cloudconfigurationd
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient.enroll
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.ManagedClient.startup
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.NetBootClientStatus
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.NetworkDiagnostics
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.NetworkLinkConditioner
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.RemoteDesktop.PrivilegeProxy
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.ReportCrash.Root
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.ReportPanicService
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.ServerPerfLog.aslmanager
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.ServerPerfLog
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.SubmitDiagInfo
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.airport.wps
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.airportPrefsUpdater
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.airportd
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.efax
 launchctl unload -w /System/Library/LaunchAgents/com.apple.parentalcontrols.check.plist
 launchctl unload -w /System/Library/LaunchAgents/com.apple.ScreenReaderUIServer.plist
-
 launchctl unload -w /System/Library/LaunchAgents/com.apple.safaridavclient.plist
-
-
-
 launchctl unload -w /System/Library/LaunchAgents/com.apple.KerberosHelper.LKDCHelper
 launchctl unload -w /System/Library/LaunchAgents/com.apple.ManagedClient.agent
 launchctl unload -w /System/Library/LaunchAgents/com.apple.ManagedClient.enrollagent
@@ -599,31 +472,14 @@ launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.speechdatainst
 launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.speechsynthesisd
 launchctl unload -w /System/Library/LaunchAgents/com.apple.speech.synthesisserver
 launchctl unload -w /System/Library/LaunchAgents/com.apple.spindump_agent
+chmod 755 /System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.extra.xpc
+chmod 755 /Applications/iTunes.app/Contents/MacOS/iTunesHelper.app
+chmod 755 /System/Library/PrivateFrameworks/BookKit.framework/XPCServices/com.apple.BKAgentService.xpc
 
-
-
-launchctl unload -w /Library/LaunchDaemons/com.microsoft.office.licensing.helper
-
-sudo /usr/bin/gem update --system
-
-
-
-
-sudo chmod 755 /System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.extra.xpc
-sudo chmod 755 /Applications/iTunes.app/Contents/MacOS/iTunesHelper.app
-sudo chmod 755 /System/Library/PrivateFrameworks/BookKit.framework/XPCServices/com.apple.BKAgentService.xpc"
-
-
-echo ""
 cecho "Done!" $cyan
-echo ""
-echo ""
 cecho "################################################################################" $white
-echo ""
-echo ""
 cecho "Note that some of these changes require a logout/restart to take effect." $red
 cecho "Killing some open applications in order to take effect." $red
-echo ""
 
 find ~/Library/Application\ Support/Dock -name "*.db" -maxdepth 1 -delete
 for app in "Activity Monitor" "Address Book" "Calendar" "Contacts" "cfprefsd" \

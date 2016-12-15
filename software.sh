@@ -50,7 +50,7 @@ for brew in "${brews}"; do
   echo "..${brew}"
   brew install "${brew}"
 done
-   zv     xxx
+
 apps=`cat sxtware/apps`] v
 gems=`cat software/gems`
 
@@ -74,11 +74,6 @@ done
 
 # Update Python and Python3 package managers
 pip install --upgrade pip
-# pip3 install --upgrade pip setuptools wheel
-
-# brew link curl --force
-# brew linkapps python
-# brew linkapps python3
 
 # Fix permissions on /usr/local/
 sudo chflags norestricted /usr/local && sudo chown "$(whoami)":admin /usr/local && sudo chown -R "$(whoami)":admin /usr/local
