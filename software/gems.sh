@@ -1,5 +1,0 @@
-'bundler'
-'compass'
-'jsdoc'
-'nokogiri'
-'sass'

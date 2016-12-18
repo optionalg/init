@@ -3,16 +3,8 @@
 # Update system and setup command-line tools
 xcode-select --install
 
-# clean system of unnecessary built-in apps
-sudo rm -rf /Applications/GarageBand.app
-sudo rm -rf /Applications/iMovie.app
-sudo rm -rf /Applications/iTunes.app
-sudo rm -rf "/Library/Application Support/GarageBand"
-sudo rm -rf "/Library/Application Support/Logic"
-sudo rm -rf "/Library/Audio/Apple Loops"
-
 # Update system Ruby
-sudo /usr/bin/gem update --system --no-document
+#sudo /usr/bin/gem update --system --no-document
 
 # Check if Homebrew is installed
 [ ! -f "$(which brew)" ] && /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -26,14 +18,12 @@ brew tap homebrew/dupes
 brew tap homebrew/versions
 brew tap homebrew/fuse
 brew tap homebrew/gui
-brew tap homebrew/php
-
-
+brew tap homebrew/homebrew-php
 brew tap caskroom/fonts
 brew tap caskroom/versions
 
 
-# Check if Git is installed
+# Check if Git is installed/Users/davidcondrey/Github/init/software/brews
 which -s git || brew install git
 
 #
@@ -42,38 +32,83 @@ which -s git || brew install git
 # chsh -s $(brew --prefix)/bin/fish
 # mkdir -p ~/.config/fish
 
+function loopinstaller () {
+	local l;
+	local a;
+	local f;
 
-# Loop through lists
-brews=`cat software/brews`
-echo "installing Homebrew packages.."
-for brew in "${brews}"; do
-  echo "..${brew}"
-  brew install "${brew}"
-done
+	case "$1" in
+        brew)
+            l="Homebrew packages"
+            ;;
+         
+        cask)
+            l="software applications"
+            ;;
+         
+        gem)
+            l="Ruby Gems"
+            ;;
+        npm)
+            l="npm modules"
+            a="-g"
+            ;;
+        *)
+            exit 1
+ 
+	esac
 
-apps=`cat sxtware/apps`] v
-gems=`cat software/gems`
+	read -p "Do you want to modify or review which $list will be installled?" confirm
+	
+	if [[ $confirm =~ [yY](es)* ]]; then
+		"${EDITOR:-vi}" lists/$1s
+	fi;
 
-echo "installing Ruby gems.."
-for gem in "${gems[@]}"; do
-  echo "..${gem}"
-  brew gem install "${gem}"
-done
+	echo "Installing $(echo $list | tr '[:upper:]' '[:lower:]' | awk '{print $NF}').."
+	cat lists/$1s | while read l; do
+  		echo "..${line}"
+  
+  		if [[ "$1" -eq "gem" ]]; then
+  			brew gem install $line
+  			[ ! -f "$($? -ne 0)" ] && f+=($l)
+		else
+			$1 install $a $l
+			[ ! -f "$($? -ne 0)" ] && f+=($l)
+		fi
+	done
 
-echo "installing Applications.."
-for app ixxxcvccc n "${apps[@]}"; do
-  echo "..${app}"
-  brew cask install --appdir="/Applications" "${app}"
-done
+	if [ -n "$f" ]; then
+		echo "These items failed to be properly installed: "
+		echo "$f"
+	fi	
+}
 
-echo "installing node modules.."
-for mod in "${modules[@]}"; do
-  echo "..${mod}"
-  npm install -g "${mod}"
-done
+loopinstall cask
+loopinstall brew
+loopinstall gem
+loopinstall npm
 
-# Update Python and Python3 package managers
+# Install easy_install
+[ ! -f "$(which easy_install)" ] && curl https://bootstrap.pypa.io/ez_setup.py -o - | sudo python
+
+sudo easy_install pip
+
+# Update Python package manager
 pip install --upgrade pip
+
+curl -O  http://pear.php.net/go-pear.phar
+php -d detect_unicode=0 go-pear.phar
+
+phpversion="$(php -v | tail -r | tail -n 1 | cut -d " " -f 2 | cut -c 1-3)"
+echo -e "\ninclude_path = '.:/Users/davidcondrey/pear/share/pear/' \nextension=v8js.so \n" >> /usr/local/etc/php/$(phpversion)/php.ini
+
+git clone https://github.com/phpv8/v8js $TMPDIR/v8js && cd $_
+./configure CXXFLAGS="-Wno-c++11-narrowing"
+make
+make test
+make install
+
+sudo apachectl restart
 
 # Fix permissions on /usr/local/
 sudo chflags norestricted /usr/local && sudo chown "$(whoami)":admin /usr/local && sudo chown -R "$(whoami)":admin /usr/local
