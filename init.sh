@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 # move .bash_profile and .bashrc into place
 mv *.bash* ~/ && mv .css ~/
 mv "Sublime Text 3" ~/Library/Application\ Support/
@@ -12,6 +11,16 @@ export PROMPT_COMMAND='history -a'
 shopt -s cmdhist
 shopt -s histappend
 
+# xcode command-line tools
+(
+xcode-select --install;
+sleep 1;
+osascript -e \
+    'tell application "System Events" \\
+        tell process "Install Command Line Developer Tools" \\
+            keystroke return \\
+            click button "Agree" of window "License Agreement"'
+)
 
 sudo chflags -R nouchg,nouappnd ~ $TMPDIR.. ;
 sudo chown -R $UID:staff ~ $_ ;
@@ -25,12 +34,30 @@ sudo chmod 733 Public/Drop\ Box ;
 sh software.sh
 
 
-source util.sh
+# Set the colours you can use
+black='\033[0;30m'
+white='\033[0;37m'
+red='\033[0;31m'
+green='\033[0;32m'
+yellow='\033[0;33m'
+blue='\033[0;34m'
+magenta='\033[0;35m'
+cyan='\033[0;36m'
+
+# Resets the style
+reset=`tput sgr0`
+
+# Color-echo. Improved. [Thanks @joaocunha]
+# arg $1 = message
+# arg $2 = Color
+cecho() {
+  echo "${2}${1}${reset}"
+  return
+}
 
 # Set continue to false by default
-local CONTINUE=false
+CONTINUE=false
 
-getaccess
 
 # Here we go.. ask for the administrator password upfront and run a
 # keep-alive to update existing `sudo` time stamp until script has finished

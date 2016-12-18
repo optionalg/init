@@ -1,30 +1,58 @@
 #!/bin/bash
 
-# Update system and setup command-line tools
-xcode-select --install
+hasHomebrew () {
+  # Check for Homebrew
+  #verbose "Checking homebrew install"
+	if type_not_exists 'brew'; then
+		warning "No Homebrew. Gots to install it..."
+		seek_confirmation "Install Homebrew?"
 
-# Update system Ruby
-#sudo /usr/bin/gem update --system --no-document
+		if is_confirmed; then
+			#   Ensure that we can actually, like, compile anything.
+			if [[ ! "$(type -P gcc)" && "$OSTYPE" =~ ^darwin ]]; then
+				notice "XCode or the Command Line Tools for XCode must be installed first."
+        		seek_confirmation "Install Command Line Tools from here?"
+        		if is_confirmed; then
+          		(
+					xcode-select --install;
+					sleep 1;
+					osascript -e \
+    					'tell application "System Events" \\
+        				tell process "Install Command Line Developer Tools" \\
+            			keystroke return \\
+            			click button "Agree" of window "License Agreement"'
+				)
+        		else
+          			die "Please come back after Command Line Tools are installed."
+        		fi
+      		fi
 
-# Check if Homebrew is installed
-[ ! -f "$(which brew)" ] && /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew upgrade
-brew update
+			sudo /usr/bin/gem update --system -N -​-silent -​-build-root ${tmpDir}
 
-# Subscribe to taps
-brew tap homebrew/services
-brew tap homebrew/completions
-brew tap homebrew/dupes
-brew tap homebrew/versions
-brew tap homebrew/fuse
-brew tap homebrew/gui
-brew tap homebrew/homebrew-php
-brew tap caskroom/fonts
-brew tap caskroom/versions
+      		# Install Homebrew
+      		ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+      
+			local taps=(
+      		"homebrew/services",
+      		"homebrew/completions",
+      		"homebrew/dupes",
+      		"homebrew/versions",
+      		"homebrew/fuse",
+      		"homebrew/gui"
+      		"homebrew/homebrew-php",
+      		"caskroom/fonts",
+      		"caskroom/versions"
+      }
+      
+      for i in "${taps[@]}"; do
+		brew tap $i
+	  done
 
-
-# Check if Git is installed/Users/davidcondrey/Github/init/software/brews
-which -s git || brew install git
+    else
+      die "Without Homebrew installed we won't get very far."
+    fi
+  fi
+}
 
 #
 # set fish as default shell
