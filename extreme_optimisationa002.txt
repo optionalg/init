@@ -1,0 +1,516 @@
+#!/bin/bash
+echo ""
+echo "extreme_optimisation script version: a0.02"
+echo "this script is provided 'as is'."
+echo ""
+echo "1. Install Optimisations"
+echo "2. Remove Optimisations"
+echo "3. Exit"
+read opt
+case $opt in
+        1) echo "Install Optimisations" 
+            action="unload"
+            ;;
+        2) echo "Remove Optimisations"
+            action="load"
+            ;;
+        3) echo "Exit"
+            exit 1
+            ;;
+        *) echo "invalid option"
+	    exit 1
+        ;;
+        	 
+    esac
+
+
+
+# Backup overrides.plist as a safety measure
+# Only backup once as this should capture original state.
+# Moving the overrides.bak -> overrides.plist will restore launchd setup to original state.
+
+if [ ! -s /var/db/launchd.db/com.apple.launchd/overrides.bak ]; then
+	sudo cp /var/db/launchd.db/com.apple.launchd/overrides.plist /var/db/launchd.db/com.apple.launchd/overrides.bak
+fi
+
+if [ ! -s /var/db/launchd.db/com.apple.launchd.peruser.501/overrides.bak ]; then
+sudo cp /var/db/launchd.db/com.apple.launchd.peruser.501/overrides.plist /var/db/launchd.db/com.apple.launchd/overrides.bak
+fi
+
+if [ ! -s /System/Library/LaunchDaemons_Disabled ]; then
+sudo mkdir /System/Library/LaunchDaemons_Disabled
+fi
+
+if [ ! -s /System/Library/LaunchAgents_Disabled ]; then
+sudo mkdir /System/Library/LaunchAgents_Disabled
+fi
+
+if [ ! -s /Library/LaunchDaemons_Disabled ]; then
+sudo mkdir /Library/LaunchDaemons_Disabled
+fi
+
+if [ ! -s /Library/LaunchAgents_Disabled ]; then
+sudo mkdir /Library/LaunchAgents_Disabled
+fi
+
+if [ ! -s ~/Library/LaunchAgents_Disabled ]; then
+sudo mkdir ~/Library/LaunchAgents_Disabled
+fi
+
+# Function to enable or disable Agents and Daemons
+# requires three args - action, , process_name
+
+launch_control ()   
+{
+if [ "$1" =  "unload" ]; then
+	src_suf=""
+	tgt_suf="_Disabled"
+else
+	src_suf="_Disabled"
+	tgt_suf=""
+fi
+if [ -s "${2}${src_suf}/${3}.plist" ]; then
+	sudo mv ${2}${src_suf}/${3}.plist ${2}${tgt_suf}/${3}.plist;	
+echo "${1} ${3}"
+else
+	echo "Launch process not found: $3"
+fi
+}
+
+# List of LaunchDaemons to control
+
+launchDaemons="bootps
+com.apple.AOSNotificationOSX
+com.apple.AirPlayXPCHelper
+com.apple.AppleFileServer
+com.apple.CoreRAID
+com.apple.DiagnosticReportCleanUpDaemon
+com.apple.DumpGPURestart
+com.apple.DumpPanic
+com.apple.FileCoordination
+com.apple.FileSyncAgent.sshd
+com.apple.FontWorker
+com.apple.IFCStart
+com.apple.IOAccelMemoryInfoCollector
+com.apple.InternetSharing
+com.apple.Kerberos.digest-service
+com.apple.Kerberos.kadmind
+com.apple.Kerberos.kcm
+com.apple.Kerberos.kdc
+com.apple.Kerberos.kpasswdd
+com.apple.ManagedClient.cloudconfigurationd
+com.apple.ManagedClient.enroll
+com.apple.ManagedClient
+com.apple.ManagedClient.startup
+com.apple.NetBootClientStatus
+com.apple.NetworkDiagnostics
+com.apple.NetworkLinkConditioner
+com.apple.ODSAgent
+com.apple.PasswordService
+com.apple.PCIELaneConfigTool
+com.apple.RFBEventHelper
+com.apple.RemoteDesktop.PrivilegeProxy
+com.apple.ReportCrash.Root
+com.apple.ReportPanicService
+com.apple.ServerPerfLog.aslmanager
+com.apple.ServerPerfLog
+com.apple.SubmitDiagInfo
+com.apple.UserNotificationCenter
+com.apple.afpfs_afpLoad
+com.apple.afpfs_checkafp
+com.apple.autofsd
+com.apple.alf.agent
+com.apple.apsd
+com.apple.airport.wps
+com.apple.airportPrefsUpdater
+com.apple.airportd
+com.apple.aslmanager
+com.apple.atrun
+com.apple.awacsd
+com.apple.backupd-auto
+com.apple.backupd
+com.apple.bluetoothaudiod
+com.apple.bnepd
+com.apple.cmio.AVCAssistant
+com.apple.cmio.AppleCameraAssistant
+com.apple.cmio.IIDCVideoAssistant
+com.apple.cmio.VDCAssistant
+com.apple.comsat
+com.apple.coreservices.appleid.passwordcheck
+com.apple.cvmsServ.plist
+com.apple.distnoted.xpc.daemon
+com.apple.dnsextd
+com.apple.docsetinstalld
+com.apple.dpd
+com.apple.dspluginhelperd
+com.apple.dvdplayback.setregion
+com.apple.efax
+com.apple.efilogin-helper
+com.apple.emond.aslmanager
+com.apple.emond
+com.apple.emlog
+com.apple.eppc
+com.apple.familycontrols
+com.apple.findmymac
+com.apple.findmymacmessenger
+com.apple.firmwaresyncd
+com.apple.fontd
+com.apple.fontmover
+com.apple.ftp-proxy
+com.apple.fseventsd
+com.apple.getty
+com.apple.gkreport
+com.apple.hdiejectd
+com.apple.iCloudStats
+com.apple.iconservices.iconservicesd
+com.apple.kdumpd
+com.apple.laterscheduler
+com.apple.locate
+com.apple.locationd
+com.apple.lockd
+com.apple.mbicloudsetupd
+com.apple.mdmclient.daemon
+com.apple.metadata.mds.index
+com.apple.metadata.mds
+com.apple.metadata.mds.scan
+com.apple.metadata.mds.spindump
+com.apple.mrt
+com.apple.msrpc.echosvc
+com.apple.msrpc.lsarpc
+com.apple.msrpc.mdssvc
+com.apple.msrpc.netlogon
+com.apple.msrpc.srvsvc
+com.apple.msrpc.wkssvc
+com.apple.mtmd
+com.apple.mtmfs
+com.apple.netbiosd
+com.apple.networkd
+com.apple.networkd_privledged
+com.apple.newsyslog.conf
+com.apple.newsyslog
+com.apple.nfsconf
+com.apple.nfsd
+com.apple.nis.ypbind
+com.apple.noticeboard.state
+com.apple.ocspd
+com.apple.pacemaker
+com.apple.pfctl
+com.apple.pfd
+com.apple.preferences.timezone.admintool
+com.apple.preferences.timezone.auto
+com.apple.printtool.daemon
+com.apple.racoon
+com.apple.remotepairtool
+com.apple.revisiond
+com.apple.rpcbind
+com.apple.sandboxd
+com.apple.scsid
+com.apple.shutdown_monitor
+com.apple.sleepservicesd
+com.apple.smb.preferences
+com.apple.smbd
+com.apple.snhelper
+com.apple.softwareupdate_firstrun_tasks
+com.apple.softwareupdated
+com.apple.spindump
+com.apple.spindump_symbolicator
+com.apple.stackshot
+com.apple.statd.notify
+com.apple.storereceiptinstaller
+com.apple.suhelperd
+com.apple.syslogd
+com.apple.systemstats.analysis
+com.apple.systemstats.daily
+com.apple.systemstatsd
+com.apple.tccd.system
+com.apple.ucupdate
+com.apple.uninstalld
+com.apple.usbmuxd
+com.apple.uucp
+com.apple.vsdbutil
+com.apple.warmd
+com.apple.wdhelper
+com.apple.webdavfs_load_kext
+com.apple.wifid
+com.apple.wwand
+com.apple.xsan
+com.apple.xsanmgrd
+com.apple.xscertadmin
+com.apple.xscertd-helper
+com.apple.xscertd
+com.danga.memcached
+com.vix.cron
+finger
+ftp
+login
+ntalk
+org.apache.httpd
+org.cups.cups-lpd
+org.cups.cupsd
+org.net-snmp.snmpd
+org.ntp.ntpd
+org.openldap.slapd
+org.postfix.master
+telnet
+tftp"
+
+# List of LaunchAgents to control
+
+launchAgents="
+com.apple.AOSPushRelay
+com.apple.AddressBook.AssistantService
+com.apple.AddressBook.SourceSync
+com.apple.AddressBook.abd
+com.apple.AirPlayUIAgent
+com.apple.AirPortBaseStationAgent
+com.apple.AppleGraphicsWarning
+com.apple.AssistiveControl
+com.apple.BezelUI
+com.apple.CalendarAgent
+com.apple.CalendarAgentLauncher
+com.apple.ContainerRepairAgent
+com.apple.CoreLocationAgent
+com.apple.CoreRAIDAgent
+com.apple.EscrowSecurityAlert
+com.apple.FTCleanup
+com.apple.FileSyncAgent.PHD
+com.apple.FontRegistryUIAgent
+com.apple.FontValidator
+com.apple.FontValidatorConduit
+com.apple.FontWorker
+com.apple.IMLoggingAgent
+com.apple.KerberosHelper.LKDCHelper
+com.apple.ManagedClient.agent
+com.apple.ManagedClient.enrollagent
+com.apple.Maps.pushdaemon
+com.apple.NetworkDiagnostics
+com.apple.PCIESlotCheck
+com.apple.PackageKit.InstallStatus
+com.apple.PubSub.Agent
+com.apple.ReclaimSpaceAgent
+com.apple.RemoteDesktop
+com.apple.ReportCrash.Self
+com.apple.ReportCrash
+com.apple.ReportGPURestart
+com.apple.ReportPanic
+com.apple.SafariNotificationAgent
+com.apple.ScreenReaderUIServer
+com.apple.ServiceManagement.LoginItems
+com.apple.SocialPushAgent
+com.apple.SubmitDiagInfo
+com.apple.TMHelperAgent.SetupOffer
+com.apple.TMHelperAgent
+com.apple.UserEventAgent-Aqua
+com.apple.UserEventAgent-LoginWindow
+com.apple.UserNotificationCenterAgent-LoginWindow
+com.apple.UserNotificationCenterAgent
+com.apple.VoiceOver
+com.apple.WebKit.PluginAgent
+com.apple.ZoomWindow
+com.apple.accountsd
+com.apple.alf.useragent
+com.apple.aos.migrate
+com.apple.appstoreupdateagent
+com.apple.apsctl
+com.apple.assistant_service
+com.apple.assistantd
+com.apple.avrcpagent
+com.apple.bookstoreagent
+com.apple.cfnetwork.AuthBrokerAgent
+com.apple.cmfsyncagent
+com.apple.cookied
+com.apple.coreservices.appleid.authentication
+com.apple.coreservices.uiagent
+com.apple.csuseragent
+com.apple.distnoted.xpc.agent
+com.apple.dt.CommandLineTools.installondemand
+com.apple.familycontrols.useragent
+com.apple.findmymacmessenger
+com.apple.gamed
+com.apple.helpd
+com.apple.icbaccountsd
+com.apple.icloud.AOSNotificationAgent
+com.apple.icloud.AOSNotificationLoginAgent
+com.apple.identityservicesd
+com.apple.imagent
+com.apple.imklaunchagent
+com.apple.isst
+com.apple.lateragent
+com.apple.librariand
+com.apple.locationmenu
+com.apple.lookupd
+com.apple.maspushagent
+com.apple.mbloginhelper.user
+com.apple.mbpluginhost.user
+com.apple.mdmclient.agent
+com.apple.mdmclient.cloudconfig.agent
+com.apple.mdworker.32bit
+com.apple.mdworker.bundles
+com.apple.mdworker.isolation
+com.apple.mdworker.lsb
+com.apple.mdworker.mail
+com.apple.mdworker.shared
+com.apple.mdworker.single
+com.apple.mdworker.sizing
+com.apple.metadata.mdflagwriter
+com.apple.metadata.mdwrite
+com.apple.midiserver
+com.apple.mrt.uiagent
+com.apple.noticeboard.agent
+com.apple.notificationcenterui
+com.apple.parentalcontrols.check
+com.apple.pboard
+com.apple.pbs
+com.apple.pictd
+com.apple.printtool.agent
+com.apple.printuitool.agent
+com.apple.quicklook.32bit
+com.apple.quicklook.config
+com.apple.quicklook
+com.apple.quicklook.ui.helper
+com.apple.rcd
+com.apple.recentsd
+com.apple.safaridavclient
+com.apple.scopedbookmarkagent.xpc
+com.apple.scrod
+com.apple.secd
+com.apple.security.cloudkeychainproxy
+com.apple.sharingd
+com.apple.soagent
+com.apple.softwareupdate_notify_agent
+com.apple.speech.feedbackservicesserver
+com.apple.speech.recognitionserver
+com.apple.speech.speechdatainstallerd
+com.apple.speech.speechsynthesisd
+com.apple.speech.synthesisserver
+com.apple.spindump_agent
+com.apple.store_helper
+com.apple.storeagent
+com.apple.syncdefaultsd
+com.apple.syncservices.SyncServer
+com.apple.syncservices.uihandler
+com.apple.systemprofiler
+com.apple.talagent
+com.apple.tccd
+com.apple.tiswitcher
+com.apple.ubd
+com.apple.universalaccessAuthWarn
+com.apple.universalaccesscontrol
+com.apple.universalaccessd
+com.apple.unmountassistant.useragent
+com.apple.usernoted
+com.apple.wifi.WiFiKeychainProxy
+com.apple.xmigrationhelper.user
+com.apple.java.InstallOnDemand
+com.apple.java.updateSharing"
+
+libraryLaunchAgents="
+com.oracle.java.Java-Updater
+com.teamviewer.teamviewer_desktop
+com.teamviewer.teamviewer
+org.freedesktop.dbus-session
+org.macosforge.xquartz.startx"
+
+libraryLaunchDaemons="
+com.adobe.fpsaud
+com.bombich.ccchelper
+com.microsoft.office.licensing.helper
+com.oracle.java.Helper-Tool
+com.syniumsoftware.CleanAppDaemon
+com.teamviewer.Helper
+com.teamviewer.teamviewer_service
+org.freedesktop.dbus-system
+org.macosforge.xquartz.privileged_startx
+org.virtualbox.startup
+org.wireshark.ChmodBPF"
+
+userLaunchAgents="
+com.google.keystone.agent
+org.virtualbox.vboxwebsrv"
+
+disablePeskyApps="
+/System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.extra.xpc
+/Applications/iTunes.app/Contents/MacOS/iTunesHelper.app
+/System/Library/PrivateFrameworks/BookKit.framework/XPCServices/com.apple.BKAgentService.xpc"
+
+
+# Process list of LaunchDaemons
+for launchItems in $launchDaemons
+do	
+	launch_control $action /System/Library/LaunchDaemons $launchItems
+done	
+
+# Process list of LaunchAgents
+for launchItems in $launchAgents
+do
+	launch_control $action /System/Library/LaunchAgents $launchItems
+done
+
+# Process list of libraryLaunchDaemons
+for launchItems in $libraryLaunchDaemons
+do	
+	launch_control $action /Library/LaunchDaemons $launchItems
+done	
+
+# Process list of libraryLaunchAgents
+for launchItems in $libraryLaunchAgents
+do
+	launch_control $action /Library/LaunchAgents $launchItems
+done
+
+# Process list of userLaunchAgents
+for launchItems in $userLaunchAgents
+do
+	launch_control $action ~/Library/LaunchAgents $launchItems
+done
+
+if [ "$action" == "unload" ]; then
+	fileperms=444
+	defswitch=yes
+	notdefswitch=no
+	finderBool=1
+	else
+	fileperms=755
+	defswitch=no
+	notdefswitch=yes
+	finderBool=0
+fi
+for filetofix in $disablePeskyApps
+do	echo "$filetofix"
+	sudo chmod "$fileperms" "$filetofix"
+done
+ 
+# Check installed RAM, disable VM if 8Gb or more.
+
+mem_inst=`/usr/sbin/sysctl -n hw.memsize`
+
+if [ "$mem_inst" -ge "8589934592" ]; then
+	echo "8Gb+ Memory installed."
+		if [ "$action" == "unload" ]; then
+			sudo nvram boot-args="vm_compressor=2"
+			sudo pmset -a hibernatemode 0
+			echo "vm.compressor_mode set to 2"
+		else
+			sudo nvram boot-args="vm_compressor=4"
+			sudo pmset -a hibernatemode 3
+			echo "vm.compressor_mode reset to defaults"
+		fi
+			launch_control $action /System/Library/LaunchDaemons com.apple.dynamic_pager
+	else
+	echo "Less than 8Gb memory."
+fi
+
+defaults write com.apple.dashboard mcx-disabled -bool "${defswitch}"
+defaults write com.apple.dock mcx-expose-disabled -bool "${defswitch}"
+defaults write com.apple.finder QuitMenuItem "${finderBool}"
+
+
+defaults write com.apple.finder AnimateWindowZoom -bool  $notdefswitch
+defaults write com.apple.finder DisableAllAnimations -bool $defswitch
+defaults write com.apple.finder CreateDesktop -bool $notdefswitch
+
+defaults write com.apple.dock single-app -bool $defswitch
+
+
+echo "changes applied, please restart the computer NOW..."
+

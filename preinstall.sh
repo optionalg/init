@@ -123,11 +123,6 @@ defaults write com.apple.spotlight orderedItems -array \
   # Rebuild the index from scratch
   sudo mdutil -E / > /dev/null
 
-echo "Expand the save panel by default"
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
-
 echo "Automatically quit printer app once the print jobs complete"
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
@@ -146,10 +141,6 @@ defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
 
 echo "Removing duplicates in the 'Open With' menu"
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
-
-echo "Disable smart quotes and smart dashes"
-defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 
 echo "Disable Photos.app from starting everytime a device is plugged in"
 defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
@@ -186,14 +177,21 @@ sudo pmset -a standbydelay 86400
 echo "Increasing sound quality for Bluetooth headphones/headsets"
 defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
 
-echo "Enabling full keyboard access for all controls (enable Tab in modal dialogs, menu windows, etc.)"
+
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+defaults write NSGlobalDomain AppleFontSmoothing -int 2
+defaults write NSGlobalDomain  "com.apple.springing.delay" -int 0
+defaults write NSGlobalDomain AppleActionOnDoubleClick type -string "Minimize"
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
-
-echo "Disabling press-and-hold for special keys in favor of key repeat"
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
-
-echo "Setting a blazingly fast keyboard repeat rate"
+defaults write NSGlobalDomain AppleShowAllExtensions -int AppleShowAllExtensions 1
+defaults write NSGlobalDomain InitialKeyRepeat -int 3
 defaults write NSGlobalDomain KeyRepeat -int 0
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
 
 echo "Setting trackpad & mouse speed to a reasonable number"
 defaults write -g com.apple.trackpad.scaling 2
@@ -203,42 +201,23 @@ echo "Turn off keyboard illumination when computer is not used for 5 minutes"
 defaults write com.apple.BezelServices kDimTime -int 300
 
 echo "Disable display from automatically adjusting brightness)"
-sudo defaults write /Library/Preferences/com.apple.iokit.AmbientLightSensor "Automatic Display Enabled" -bool false
+defaults write /Library/Preferences/com.apple.iokit.AmbientLightSensor "Automatic Display Enabled" -bool false
 
 defaults write com.apple.screencapture type -string "jpg"
 
-echo "Enabling subpixel font rendering on non-Apple LCDs"
-defaults write NSGlobalDomain AppleFontSmoothing -int 2
-
 echo "Enabling HiDPI display modes (requires restart)"
-sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
+defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
 
 ###############################################################################
 # Finder
 ###############################################################################
-
-echo "Show icons for hard drives, servers, and removable media on the desktop"
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-
-echo "Show hidden files in Finder by default"
 defaults write com.apple.Finder AppleShowAllFiles -bool true
-
-echo "Show dotfiles in Finder by default"
 defaults write com.apple.finder AppleShowAllFiles TRUE
-
-echo "Show all filename extensions in Finder by default"
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-
-echo "Show status bar in Finder by default"
 defaults write com.apple.finder ShowStatusBar -bool true
-
-echo "Display full POSIX path as Finder window title"
 defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
-
-echo "Disable the warning when changing a file extension?"
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
-
-echo "Use column view in all Finder windows by default?"
 defaults write com.apple.finder FXPreferredViewStyle Clmv
 
 echo "Avoid creation of .DS_Store files on network volumes?"
@@ -288,9 +267,6 @@ defaults write com.apple.dock expose-animation-duration -float 0.1
 defaults write com.apple.dock "expose-group-by-app" -bool true
 
 defaults write com.apple.finder DisableAllAnimations -bool true
-
-echo "Disable the over-the-top focus ring animation"
-defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
 
 echo "Privacy: Don't send search queries to Apple"
 defaults write com.apple.Safari UniversalSearchEnabled -bool false

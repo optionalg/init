@@ -52,13 +52,23 @@ mv /System/Library/LaunchDaemons/com.apple.appleseed.fbahelperd.plistmv  /System
 
 
 
-
+# Remove Audio Recording kernel extensions.
+#sudo srm -rf /System/Library/Extensions/AppleUSBAudio.kext
+#sudo srm -rf /System/Library/Extensions/IOAudioFamily.kext
+# Remove Video Recording kernel extensions.
+# Remove external iSight camera.
+#sudo srm -rf /System/Library/Extensions/Apple_iSight.kext
+# Remove internal iSight camera.
+#sudo srm -rf /System/Library/Extensions/IOUSBFamily.kext/Contents/PlugIns/AppleUSBVideoSupport.kext
+# Remove USB kernel extensions. # Default setting:
+#sudo srm -rf /System/Library/Extensions/IOUSBMassStorageClass.kext
+# Remove FireWire kernel extensions. sudo srm -rf /System/Library/Extensions/IOFireWireSerialBusProtocolTransport.kext
 
 launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
 launchctl unload -w /System/Library/LaunchDaemons/tftp.plist
 launchctl remove -w /System/Library/LaunchDaemons/finger.plist
 launchctl remove -w /System/Library/LaunchDaemons/telnet.plist
-
+launchctl unload -w /System/Library/LaunchDaemons/com.apple.efax.plist
 launchctl unload -w /System/Library/LaunchDaemons/org.openldap.slapd.plist
 
 # Portmap
@@ -104,6 +114,14 @@ dict Enabled -int 0
 launchctl unload -w /System/Library/LaunchDaemons/
 com.apple.InternetSharing.plist
 
+# Remove Airport kernel extension
+sudo srm -rf /System/Library/Extensions/IO80211Family.kext
+# Remove Bluetooth kernel extensions.
+sudo srm -rf /System/Library/Extensions/IOBluetoothFamily.kext
+sudo srm -rf /System/Library/Extensions/IOBluetoothHIDDriver.kext
+# Remove IR kernel extensions.
+sudo srm -rf /System/Library/Extensions/AppleIRController.kext
+
 ## Disable Bluetooth Sharing.
 defaults -currentHost write com.apple.bluetooth PrefKeyServicesEnabled 0
 defaults write /Library/Preferences/com.apple.Bluetooth \
@@ -113,10 +131,22 @@ killall -HUP blued
 # disable infrared sensor
 defaults write /Library/Preferences/com.apple.driver.AppleIRController DeviceEnabled -int 0
 
+# Disable printer sharing.
+sudo cp /etc/cups/cupsd.conf $TEMP_FILE
+if /usr/bin/grep "Port 631" /etc/cups/cupsd.conf
+then
+     usr/bin/sed "/^Port 631.*/s//Listen localhost:631/g" $TEMP_FILE > /
+     etc/cups/cupsd.conf
+else
+echo "Printer Sharing not on"
+fi
+
 # disable bonjour
 defaults write /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist ProgramArguments -array-add "-NoMulticastAdvertisements"
 sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
 sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponderHelper.plist
+# Enable secure virtual memory.
+sudo defaults write /Library/Preferences/com.apple.virtualMemoryUseEncryptedSwap -bool YES
 
 # disable remote login
 systemsetup -setremotelogin off
@@ -135,6 +165,14 @@ systemsetup -setcomputersleep Never # disable sleep
 
 systemsetup -setrestartfreeze on # auto restart on freeze
 
+# Disable Speech Recognition. sudo defaults write
+sudo defaults write "com.apple.speech.recognition.AppleSpeechRecognition.prefs" StartSpeakableItems -bool false
+# Disable Text to Speech settings.
+sudo defaults write "com.apple.speech.synthesis.general.prefs" TalkingAlertsSpeakTextFlag -bool false
+sudo defaults write "com.apple.speech.synthesis.general.prefs" SpokenNotificationAppActivationFlag -bool false
+sudo defaults write "com.apple.speech.synthesis.general.prefs" SpokenUIUseSpeakingHotKeyFlag -bool false
+sudo defaults delete "com.apple.speech.synthesis.general.prefs" TimeAnnouncementPrefs
+
 # renew dhcp
 ipconfig set en0 DHCP
 
@@ -152,3 +190,9 @@ system_profiler SPDisplaysDataType | grep Resolution
 sysctl -n machdep.cpu.brand_string
 # show dhcp info
 ipconfig getpacket en0
+
+
+sudo nvram security-mode="full"
+sudo nvram -x -p
+
+sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText "This computer is the private property of David Condrey. If you are not this person, you do not have authorization to proceed any further.  Disconnect immediately or legal action WILL be pursued.  If lost or stolen please contact for reward.\nDavid Condrey\nemail: davidcondrey@me.com\ntel:1(323)632-3319\nweb:http://www.condrey.io\naddress: 917 S Holt Ave, Los Angeles, CA 90035"

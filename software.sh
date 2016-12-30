@@ -5,13 +5,13 @@ hasHomebrew () {
   #verbose "Checking homebrew install"
 	if type_not_exists 'brew'; then
 		warning "No Homebrew. Gots to install it..."
-		seek_confirmation "Install Homebrew?"
+		confirm "Install Homebrew?"
 
 		if is_confirmed; then
 			#   Ensure that we can actually, like, compile anything.
 			if [[ ! "$(type -P gcc)" && "$OSTYPE" =~ ^darwin ]]; then
 				notice "XCode or the Command Line Tools for XCode must be installed first."
-        		seek_confirmation "Install Command Line Tools from here?"
+        		confirm "Install Command Line Tools from here?"
         		if is_confirmed; then
           		(
 					xcode-select --install;

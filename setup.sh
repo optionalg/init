@@ -9,8 +9,6 @@ export HISTFILESIZE=1000000
 export HISTCONTROL=ignoredups
 export HISTTIMEFORMAT=
 export PROMPT_COMMAND='history -a'
-shopt -s cmdhist
-shopt -s histappend
 
 
 sudo chflags -R nouchg,nouappnd ~ $TMPDIR.. ;

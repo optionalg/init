@@ -13,8 +13,6 @@ alias -- -="cd -"
 # Find files in current directory
 alias findhere="find . -name "
 
-# Processes
-alias ps="ps auxf"
 # Find Process
 alias psfind="ps aux | grep -v grep | grep -i -e VSZ -e",
 

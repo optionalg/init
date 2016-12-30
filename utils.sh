@@ -9,13 +9,6 @@ logFile="$HOME/Library/Logs/${scriptBasename}.log"
 scriptPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Default flags
-force=0
-quiet=0
-printLog=0
-verbose=0
-
-strict=0
-debug=0
 args=()
 
 # Ensure cleanup even if script fails
@@ -25,6 +18,15 @@ trapCleanup() {
   fi
   die "Install not completed successfully."
 
+}
+
+safeExit() {
+  # Delete temp files, if any
+  if is_dir "${tmpDir}"; then
+    rm -r "${tmpDir}"
+  fi
+  trap - INT TERM EXIT
+  exit
 }
 
 # create a tmp directory for storing temporary files
@@ -40,11 +42,6 @@ MacOS Sierra initialization (https://github.com/dcondrey/init)
 Version ${version}
 
  Options:
-  -f, --force           Skip all user interaction.  Implied 'Yes' to all actions.
-  -q, --quiet       Quiet (no output)
-  -l, --log         Print log to file
-  -v, --verbose     Output more information. (Items echoed to 'verbose')
-  -d, --debug       Runs script in BASH debug mode (set -x)
   -h, --help        Display this help and exit
 "
 }
@@ -99,6 +96,41 @@ while [[ $1 = -?* ]]; do
   shift
 done
 
+confirm() {
+  # echo ""
+  input "$@"
+  if "${force}"; then
+    notice "Forcing confirmation with '--force' flag set"
+  else
+    read -p " (y/n) " -n 1
+    echo ""
+  fi
+}
+
+# Test whether the result of an 'ask' is a confirmation
+is_confirmed() {
+  if "${force}"; then
+    return 0
+  else
+    if [[ "${REPLY}" =~ ^[Yy]$ ]]; then
+      return 0
+    fi
+    return 1
+  fi
+}
+
+is_not_confirmed() {
+  if "${force}"; then
+    return 1
+  else
+    if [[ "${REPLY}" =~ ^[Nn]$ ]]; then
+      return 0
+    fi
+    return 1
+  fi
+}
+
+
 
 
 # Check if application is already installed
@@ -115,35 +147,28 @@ ascii2hex(){
 
 
 # Colors
-black='\033[0;30m'
-white='\033[0;37m'
-red='\033[0;31m'
-green='\033[0;32m'
-yellow='\033[0;33m'
-blue='\033[0;34m'
-magenta='\033[0;35m'
-cyan='\033[0;36m'
+bold=$(tput bold)
+underline=$(tput sgr 0 1)
+reset=$(tput sgr0)
+purple=$(tput setaf 171)
+red=$(tput setaf 1)
+green=$(tput setaf 76)
+tan=$(tput setaf 3)
+blue=$(tput setaf 38)
 
 # Resets the style
 reset=`tput sgr0`
 
-# Color-echo
-# arg $1 = message
-# arg $2 = Color
-_echo() {
-  echo "${2}${1}${reset}"
-  return
-}
+die ()       { local _message="${*} Exiting."; echo "$(_alert emergency)"; safeExit;}
+error ()     { local _message="${*}"; echo "$(_alert error)"; }
+warning ()   { local _message="${*}"; echo "$(_alert warning)"; }
+notice ()    { local _message="${*}"; echo "$(_alert notice)"; }
+info ()      { local _message="${*}"; echo "$(_alert info)"; }
+debug ()     { local _message="${*}"; echo "$(_alert debug)"; }
+success ()   { local _message="${*}"; echo "$(_alert success)"; }
+input()      { local _message="${*}"; echo -n "$(_alert input)"; }
+header()     { local _message="========== ${*} ==========  "; echo "$(_alert header)"; }
 
 trap trapCleanup EXIT INT TERM
 set -o errexit
 set -o pipefail
-
-# Run in debug mode, if set
-if ${debug}; then set -x ; fi
-
-verbose() {
-  if [[ "${verbose}" = "true" ]] || [ "${verbose}" == "1" ]; then
-    debug "$@"
-  fi
-}

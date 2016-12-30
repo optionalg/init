@@ -1,6 +1,7 @@
 # Paths
 export PATH=$PATH:$HOME/bin:$(brew --prefix)/share/python
 #export PATH=/usr/bin:/bin:/usr/sbin:/usr/local:/usr/local/bin:/sbin
+export CDPATH=.:$HOME
 export PYTHONPATH=$(brew --prefix)/lib/python2.7/site-packages
 export CLOSURE_PATH="/usr/local/Cellar/closure-compiler/20150315/libexec"
 
